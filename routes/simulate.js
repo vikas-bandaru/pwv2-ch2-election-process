@@ -6,6 +6,9 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'MOCK_KEY');
 
+// Load Election Data once at the top
+const electionData = require('../logic/electionData.json');
+
 router.get('/test', (req, res) => res.send('ok'));
 
 // ── Shared candidate data (used in PREP research + POLL EVM) ─────────────────
@@ -56,8 +59,7 @@ router.get('/', async (req, res) => {
 
     // State-specific data fetching
     if (voterData.state === States.ANNOUNCEMENT && voterData.location.state) {
-        // Load Election Data for Timeline
-        const electionData = require('../logic/electionData.json');
+        // Use pre-loaded electionData
         const pollDates = electionData.pollDates;
         const pollDayStr = pollDates[voterData.location.state] || '2026-05-15';
         const pollDay = new Date(pollDayStr);
@@ -126,7 +128,6 @@ router.get('/', async (req, res) => {
             }
         }
     } else if (voterData.state === States.PREP) {
-        const electionData = require('../logic/electionData.json');
         const pollDates = electionData.pollDates;
         const announcementDateStr = electionData.announcementDate;
         const todayStr = voterData.simulationDate || electionData.simulationToday;
@@ -208,8 +209,6 @@ router.get('/', async (req, res) => {
         extraData.form26Analogies = getForm26Analogies();
     }
 
-
-    const electionData = require('../logic/electionData.json');
 
     res.render('simulate', { 
         title: 'Election Simulation',

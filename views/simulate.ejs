@@ -87,7 +87,8 @@
                         </form>
 
                         <script>
-                            const constituencyData = <%- JSON.stringify(electionData.constituencies) %>;
+                            // Pass server-side data to client-side JS safely
+                            const constituencyData = JSON.parse('<%- JSON.stringify(electionData.constituencies || {}) %>');
                             const stateSelect = document.getElementById('stateSelect');
                             const constituencySelect = document.getElementById('constituencySelect');
                             const pincodeInput = document.getElementById('pincodeInput');
