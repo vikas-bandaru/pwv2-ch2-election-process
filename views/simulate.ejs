@@ -527,42 +527,32 @@
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mt-4">
-                    <!-- News A (Fake) -->
-                    <form action="/simulate/next-stage" method="POST" class="contents">
-                        <input type="hidden" name="action" value="NEXT_NEWS">
-                        <input type="hidden" name="isScammed" value="true">
-                        <input type="hidden" name="scamHeadline" value="<%= extraData.headlines.fake %>">
-                        <button type="submit" class="group relative overflow-hidden p-6 md:p-10 bg-white border-2 border-gray-100 rounded-[2rem] md:rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:border-eci-orange active:scale-95 transition-all duration-300 text-left w-full">
-                            <div class="absolute top-0 right-0 p-4 md:p-6 opacity-10 group-hover:opacity-100 transition-opacity">
-                                <svg class="w-8 h-8 md:w-12 md:h-12 text-eci-orange" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                            </div>
-                            <span class="text-xs font-black text-gray-400 uppercase tracking-widest block mb-2 md:mb-4 group-hover:text-eci-orange transition-colors">News A</span>
-                            <p class="text-lg md:text-2xl font-black text-gray-800 leading-tight group-hover:text-gray-900 transition-colors">
-                                "<%= extraData.headlines.fake %>"
-                            </p>
-                            <div class="mt-4 md:mt-8 flex items-center gap-2 text-eci-orange font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                                This is my answer <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                            </div>
-                        </button>
-                    </form>
-
-                    <!-- News B (Real) -->
-                    <form action="/simulate/next-stage" method="POST" class="contents">
-                        <input type="hidden" name="action" value="NEXT_NEWS">
-                        <input type="hidden" name="isScammed" value="">
-                        <button type="submit" class="group relative overflow-hidden p-6 md:p-10 bg-white border-2 border-gray-100 rounded-[2rem] md:rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:border-eci-blue active:scale-95 transition-all duration-300 text-left w-full">
-                            <div class="absolute top-0 right-0 p-4 md:p-6 opacity-10 group-hover:opacity-100 transition-opacity">
-                                <svg class="w-8 h-8 md:w-12 md:h-12 text-eci-blue" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
-                            </div>
-                            <span class="text-xs font-black text-gray-400 uppercase tracking-widest block mb-2 md:mb-4 group-hover:text-eci-blue transition-colors">News B</span>
-                            <p class="text-lg md:text-2xl font-black text-gray-800 leading-tight group-hover:text-gray-900 transition-colors">
-                                "<%= extraData.headlines.real %>"
-                            </p>
-                            <div class="mt-4 md:mt-8 flex items-center gap-2 text-eci-blue font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                                This is my answer <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                            </div>
-                        </button>
-                    </form>
+                    <% extraData.newsItems.forEach((item, index) => { %>
+                        <% const label = index === 0 ? 'News A' : 'News B'; %>
+                        <% const accentColor = index === 0 ? 'eci-orange' : 'eci-blue'; %>
+                        
+                        <form action="/simulate/next-stage" method="POST" class="contents">
+                            <input type="hidden" name="action" value="NEXT_NEWS">
+                            <input type="hidden" name="isScammed" value="<%= item.isFake ? 'true' : '' %>">
+                            <% if (item.isFake) { %>
+                                <input type="hidden" name="scamHeadline" value="<%= item.text %>">
+                            <% } %>
+                            <button type="submit" class="group relative overflow-hidden p-6 md:p-10 bg-white border-2 border-gray-100 rounded-[2rem] md:rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:border-<%= accentColor %> active:scale-95 transition-all duration-300 text-left w-full">
+                                <div class="absolute top-0 right-0 p-4 md:p-6 opacity-10 group-hover:opacity-100 transition-opacity">
+                                    <svg class="w-8 h-8 md:w-12 md:h-12 text-<%= accentColor %>" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs font-black text-gray-400 uppercase tracking-widest block mb-2 md:mb-4 group-hover:text-<%= accentColor %> transition-colors"><%= label %></span>
+                                <p class="text-lg md:text-2xl font-black text-gray-800 leading-tight group-hover:text-gray-900 transition-colors">
+                                    "<%= item.text %>"
+                                </p>
+                                <div class="mt-4 md:mt-8 flex items-center gap-2 text-<%= accentColor %> font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                                    This is my answer <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                                </div>
+                            </button>
+                        </form>
+                    <% }) %>
                 </div>
 
                 <div class="bg-blue-50 border border-blue-100 p-8 rounded-3xl flex gap-6 items-center">

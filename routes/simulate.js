@@ -166,7 +166,15 @@ router.get('/', async (req, res) => {
                 const text = response.text();
                 const cleanText = text.replace(/```json|```/g, '').trim();
                 const allHeadlines = JSON.parse(cleanText);
-                extraData.headlines = allHeadlines[voterData.campaignIndex];
+                const currentHeadlines = allHeadlines[voterData.campaignIndex];
+                
+                // Randomize positions
+                const newsItems = [
+                    { text: currentHeadlines.real, isFake: false },
+                    { text: currentHeadlines.fake, isFake: true }
+                ].sort(() => Math.random() - 0.5);
+
+                extraData.newsItems = newsItems;
                 extraData.newsProgress = voterData.campaignIndex + 1;
             } catch (e) {
                 console.error("Gemini Error:", e);
@@ -175,7 +183,15 @@ router.get('/', async (req, res) => {
                     { real: "New security measures at sensitive booths.", fake: "Robotic guards to replace police at all polling stations." },
                     { real: "Voter ID mandatory for all citizens.", fake: "Voting now possible via WhatsApp without registration." }
                 ];
-                extraData.headlines = fallbacks[voterData.campaignIndex];
+                const currentFallbacks = fallbacks[voterData.campaignIndex];
+
+                // Randomize positions
+                const newsItems = [
+                    { text: currentFallbacks.real, isFake: false },
+                    { text: currentFallbacks.fake, isFake: true }
+                ].sort(() => Math.random() - 0.5);
+
+                extraData.newsItems = newsItems;
                 extraData.newsProgress = voterData.campaignIndex + 1;
             }
         }
