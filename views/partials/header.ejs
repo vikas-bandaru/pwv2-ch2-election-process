@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= locals.title || 'CivicLogic' %> | CivicLogic</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --eci-blue: #003399;
+            --eci-orange: #FF9933;
+            --eci-green: #138808;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+        }
+        body { font-family: 'Outfit', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .bg-eci-blue { background-color: var(--eci-blue); }
+        .text-eci-blue { color: var(--eci-blue); }
+        .border-eci-blue { border-color: var(--eci-blue); }
+        
+        .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* News Styles */
+        .news-newspaper {
+            background: #fdfaf3;
+            border: 1px solid #e5e0d5;
+            box-shadow: 5px 5px 0px #e5e0d5;
+            font-family: 'Playfair Display', serif;
+        }
+        .news-mobile {
+            background: #111;
+            color: #fff;
+            border-radius: 2rem;
+            border: 4px solid #333;
+        }
+        .news-website {
+            background: #fff;
+            border-top: 4px solid var(--eci-blue);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+        }
+        .news-item-active {
+            outline: 4px solid var(--eci-blue);
+            transform: scale(1.02);
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <header class="bg-eci-blue text-white shadow-lg p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-tight">CivicLogic: The One-Vote Simulator</h1>
+            <% if (locals.voterName) { %>
+                <div class="text-sm font-medium">
+                    Voter: <span class="underline text-white"><%= locals.voterName %></span> | 
+                    Budget: $<%= locals.budget ? locals.budget.totalCost : '0.00' %> / $<%= locals.budget ? locals.budget.limit : '5.00' %>
+                </div>
+            <% } %>
+
+        </div>
+    </header>
+
+    <main class="flex-grow container mx-auto p-6">
