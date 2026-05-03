@@ -11,22 +11,57 @@
         </div>
     <% } %>
 
-    <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Civic Role Selection</h2>
-
-    <p class="text-gray-600 mb-8 text-center">Step into the simulation. Enter your name to begin your journey as a single, decisive voter.</p>
+    <h2 class="text-3xl font-bold text-gray-800 mb-2 text-center">Civic Role Selection</h2>
+    <p class="text-gray-600 mb-8 text-center">Select your role to begin the democratic simulation.</p>
     
-    <form action="/auth/login" method="POST" class="space-y-6">
-        <div>
-            <label for="name" class="block text-sm font-semibold text-gray-700">Full Name</label>
-            <input type="text" name="name" id="name" required 
-                class="mt-1 block w-full px-4 py-3 bg-white border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
-                focus:outline-none focus:border-eci-blue focus:ring-1 focus:ring-eci-blue"
-                placeholder="Vikas Bandaru">
+    <form action="/auth/login" method="POST" id="loginForm" class="space-y-8">
+        <!-- Role Selection Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <label class="relative cursor-pointer group">
+                <input type="radio" name="role" value="VOTER" checked class="peer sr-only">
+                <div class="p-4 border-2 border-gray-100 rounded-xl transition-all duration-200 peer-checked:border-eci-blue peer-checked:bg-blue-50 group-hover:border-blue-200">
+                    <div class="text-3xl mb-2">🗳️</div>
+                    <div class="font-bold text-gray-800">Voter</div>
+                    <div class="text-[10px] text-gray-500 leading-tight">Research, choose, and cast your vote.</div>
+                </div>
+                <div class="absolute -top-2 -right-2 bg-eci-blue text-white text-[8px] font-black px-2 py-0.5 rounded-full opacity-0 peer-checked:opacity-100 transition-opacity">ACTIVE</div>
+            </label>
+
+            <label class="relative cursor-pointer group">
+                <input type="radio" name="role" value="CANDIDATE" class="peer sr-only">
+                <div class="p-4 border-2 border-gray-100 rounded-xl transition-all duration-200 peer-checked:border-eci-blue peer-checked:bg-blue-50 group-hover:border-blue-200">
+                    <div class="text-3xl mb-2">📢</div>
+                    <div class="font-bold text-gray-800">Candidate</div>
+                    <div class="text-[10px] text-gray-500 leading-tight">File nomination and run campaigns.</div>
+                </div>
+                <div class="absolute -top-2 -right-2 bg-amber-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full opacity-100">BETA</div>
+            </label>
+
+            <label class="relative cursor-pointer group">
+                <input type="radio" name="role" value="OFFICER" class="peer sr-only">
+                <div class="p-4 border-2 border-gray-100 rounded-xl transition-all duration-200 peer-checked:border-eci-blue peer-checked:bg-blue-50 group-hover:border-blue-200">
+                    <div class="text-3xl mb-2">👨‍⚖️</div>
+                    <div class="font-bold text-gray-800">Officer</div>
+                    <div class="text-[10px] text-gray-500 leading-tight">Oversee the booth and seal machines.</div>
+                </div>
+                <div class="absolute -top-2 -right-2 bg-amber-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full opacity-100">BETA</div>
+            </label>
         </div>
-        <button type="submit" 
-            class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-eci-blue hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-eci-blue transition duration-150">
-            REGISTER TO VOTE
-        </button>
+
+        <div class="space-y-4">
+            <div>
+                <label for="name" class="block text-sm font-bold text-gray-700">Enter Your Name</label>
+                <input type="text" name="name" id="name" required 
+                    class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm
+                    focus:outline-none focus:border-eci-blue focus:ring-2 focus:ring-blue-100 transition"
+                    placeholder="Vikas Bandaru">
+            </div>
+            
+            <button type="submit" 
+                class="w-full bg-eci-blue text-white py-4 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-blue-800 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                START SIMULATION →
+            </button>
+        </div>
     </form>
 </div>
 

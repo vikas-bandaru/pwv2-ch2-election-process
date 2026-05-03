@@ -1,186 +1,59 @@
-# 🗳️ CivicLogic — Election Simulator
+# CivicLogic: Election Simulator 🗳️
 
-> **Prompt Wars Virtual · Chapter 2: The Election Process**
+A pedagogical, high-fidelity web simulation of the Indian electoral process. Built for students and citizens to understand the mechanics of democracy—from candidate research to the final EVM beep.
 
-An interactive, AI-powered civic education simulator that puts you through the full journey of a voter in India's 2026 State Assembly Elections — from the ECI announcement right through to poll day. Experience how misinformation can derail democratic participation, and how an informed voter makes all the difference.
-
-🌐 **Live Demo:** [civic-logic-simulator-1028340760722.asia-south1.run.app](https://civic-logic-simulator-1028340760722.asia-south1.run.app)
-
----
-
-## 🎮 What It Simulates
-
-The simulator walks you through **5 progressive stages**, each with state-specific data and dynamic AI-generated content:
-
-| Stage | Description |
-|---|---|
-| **1. Announcement** | ECI announces elections. Pick your state & constituency. Choose your simulation start date from a news timeline. |
-| **2. Civic Roadmap (Prep)** | Interactive voter preparation — check electoral roll, download e-EPIC, locate polling booth. |
-| **3. Information War (Campaign)** | 3 rounds of real vs. fake news. Choose wrong and you get "scammed" — which directly affects your poll eligibility. |
-| **4. Poll Day** | Cast your vote (or get turned away if ineligible — with the exact fake news reason cited). |
-| **5. Counting** | View the final simulation outcome based on your choices. |
-
----
+## 🚀 Live Preview
+The application is deployed to Google Cloud Run: [pwv2-election-process-live](https://pwv2-election-process-v2y7pqv7sa-uc.a.run.app)
 
 ## ✨ Key Features
 
-### 🗞️ Dynamic News Timeline
-The **Announcement phase** presents election milestone dates as distinct media formats:
-- 📰 **Newspaper card** — ECI announcement / Phase 1
-- 📱 **Mobile app notification** — Enrollment deadline / Phase 2
-- 🌐 **Website news** — Campaign sprint / Phase 3
+### 🎭 Multi-Role Simulation
+- **Voter (Active)**: Experience the full journey from registration to voting.
+- **Candidate (Beta)**: Understand the nomination and campaign heat (Coming Soon).
+- **Officer (Beta)**: Manage polling booths and ensure procedural integrity (Coming Soon).
 
-Clicking any card sets your simulation date, which recalculates the entire dashboard (days remaining, stage status, eligibility).
+### 🔍 Pedagogical Candidate Research
+- **"Village-Simple" English**: Legal and financial terms from Form 26 are translated into localized analogies (e.g., *Liabilities* → *Bank Loans*, *Assets* → *Property & Gold*).
+- **LogicAnalogy™ Tooltips**: Interactive hover-states that explain complex electoral concepts to 10-year-olds.
 
-### 🧠 Information War
-Three rounds of headline challenges using **Gemini AI**-generated fake news tailored to your selected state. If you believe misinformation:
-- You are marked as "scammed"
-- The specific fake headline you believed is stored
-- On Poll Day, your ineligibility reason **directly quotes** that headline
+### 🗳️ Realistic Voting Day Workflow
+- **3-Phase Poll**:
+    1. **ID Verification**: Real-world officer check.
+    2. **Inking**: Visualizing the mark of participation.
+    3. **EVM & VVPAT**: Interactive EVM mockup with symbol-based voting and a 7-second VVPAT verification window.
 
-### 📍 State-Specific Election Data
-Real 2026 Assembly Election poll dates for:
-- **Assam** — 9 Apr 2026
-- **Kerala** — 9 Apr 2026
-- **Puducherry** — 9 Apr 2026
-- **Tamil Nadu** — 23 Apr 2026
-- **West Bengal** — 29 Apr 2026
+### 🕵️ Information War Dashboard
+- **"Spot the Lie"**: AI-powered campaign headlines where users must distinguish between real news and subtle misinformation.
+- **Butterfly Effect**: The simulation calculates results based on user actions, demonstrating how a single vote or a single scam can flip a constituency.
 
-All timelines (enrollment deadline, campaign phase, poll day) are computed dynamically from the official poll date.
+### 🗺️ Localized Context
+- **Curated Constituencies**: Real offline data for West Bengal, Tamil Nadu, Kerala, Assam, and Puducherry.
+- **Dynamic Pincodes**: Auto-populated based on selected constituencies for realistic location pinning.
 
-### 🗺️ Polling Booth Locator
-Powered by **Google Maps Static API** — displays a map of the user's polling booth based on their constituency and PIN code.
+## 🛠️ Technology Stack
+- **Backend**: Node.js, Express
+- **Frontend**: EJS, Vanilla CSS (Premium Modern UI)
+- **AI Engine**: Google Gemini 1.5 Flash (for news generation)
+- **Maps**: Google Maps Static API
+- **Infrastructure**: Google Cloud Run
 
----
+## 🛡️ API Usage & Security
+- **Gemini API**: Generates dynamic headlines and misinformation challenges.
+- **Maps Static API**: Provides polling booth location visuals.
+- **Budget Tracker**: Built-in middleware to monitor API credit consumption for the TryGCP trial.
 
-## 🛠️ Tech Stack
+## 📖 How to Run Locally
 
-| Layer | Technology |
-|---|---|
-| **Runtime** | Node.js 18 |
-| **Framework** | Express.js |
-| **Templating** | EJS |
-| **Styling** | Tailwind CSS (via CDN) |
-| **AI** | Google Gemini 1.5 Flash (`@google/generative-ai`) |
-| **Maps** | Google Maps Static API |
-| **Sessions** | `express-session` (in-memory) |
-| **Deployment** | Google Cloud Run (asia-south1) |
-| **Container** | Docker |
-
----
-
-## 📁 Project Structure
-
-```
-pwv2-ch2-election-process/
-├── server.js                  # Express app entry point
-├── Dockerfile                 # Cloud Run container config
-├── .env.example               # Environment variable template
-├── logic/
-│   ├── stateMachine.js        # Core simulation state management
-│   └── electionData.json      # State-specific poll dates & config
-├── middleware/
-│   └── budget.js              # Gemini API usage tracker
-├── routes/
-│   ├── auth.js                # Login / role selection
-│   ├── simulate.js            # Main simulation flow & timeline logic
-│   └── results.js             # Final outcome display
-└── views/
-    ├── login.ejs
-    ├── simulate.ejs           # All 5 simulation stage UIs
-    ├── results.ejs
-    └── partials/
-        ├── header.ejs         # Tailwind config + news card styles
-        └── footer.ejs
-```
+1. Clone the repo
+2. Create a `.env` file:
+   ```env
+   GEMINI_API_KEY=your_key
+   GOOGLE_MAPS_API_KEY=your_key
+   SESSION_SECRET=your_secret
+   ```
+3. Install dependencies: `npm install`
+4. Start the server: `npm start`
+5. Visit `http://localhost:3000`
 
 ---
-
-## 🚀 Running Locally
-
-### Prerequisites
-- Node.js 18+
-- A [Google Gemini API key](https://aistudio.google.com/app/apikey)
-- A [Google Maps Static API key](https://developers.google.com/maps/documentation/maps-static/get-api-key)
-
-### Setup
-
-```bash
-# Clone the repo
-git clone https://github.com/vikas-bandaru/pwv2-ch2-election-process.git
-cd pwv2-ch2-election-process
-
-# Install dependencies
-npm install
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your actual API keys
-```
-
-### Environment Variables
-
-```env
-PORT=3000
-GEMINI_API_KEY=your_gemini_api_key_here
-GOOGLE_MAPS_API_KEY=your_google_maps_static_api_key_here
-SESSION_SECRET=your_session_secret_here
-```
-
-### Start
-
-```bash
-npm start
-# → http://localhost:3000
-```
-
----
-
-## ☁️ Deploying to Cloud Run
-
-```bash
-gcloud run deploy civic-logic-simulator \
-  --source . \
-  --region asia-south1 \
-  --platform managed \
-  --allow-unauthenticated \
-  --set-env-vars "GEMINI_API_KEY=...,GOOGLE_MAPS_API_KEY=...,SESSION_SECRET=..."
-```
-
-> **Note:** Do not include `PORT` in `--set-env-vars` — Cloud Run sets this automatically.
-
----
-
-## 🧩 State Machine
-
-The simulation is driven by `logic/stateMachine.js`, which manages transitions between:
-
-```
-ANNOUNCEMENT → PREP → CAMPAIGN → POLL → COUNTING
-```
-
-Key data tracked per session:
-
-| Field | Description |
-|---|---|
-| `state` | Current simulation stage |
-| `location` | Selected state, constituency, PIN code |
-| `simulationDate` | Chosen start date (drives timeline calculations) |
-| `isRegistered` | Whether voter completed Form 6 |
-| `isScammed` | Whether user believed fake news |
-| `scamHeadline` | The exact fake headline believed (shown on poll day) |
-| `campaignIndex` | Current round in the Information War (0–2) |
-
----
-
-## ⚠️ Known Limitations
-
-- **Sessions are in-memory** — reset on Cloud Run cold starts. For persistent sessions, add a Redis store.
-- **Booth location** is approximate (based on constituency + PIN) — not real-time geocoded.
-- **Gemini responses** are subject to variability; fallback headlines are used if the API call fails.
-
----
-
-## 📜 License
-
-MIT — built for the Prompt Wars Virtual educational series.
+*Disclaimer: This is a simulation. Names, parties, and events are fictionalized for educational purposes. We do not pick sides; we pick the process.*

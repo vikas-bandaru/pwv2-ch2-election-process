@@ -12,9 +12,16 @@ router.get('/login', (req, res) => {
 
 
 router.post('/login', (req, res) => {
-    const { name } = req.body;
+    const { name, role } = req.body;
     if (name) {
         req.session.voterName = name;
+        req.session.role = role || 'VOTER';
+        
+        // Ensure state machine is initialized with the correct role
+        const { CivicStateMachine } = require('../logic/stateMachine');
+        const sm = new CivicStateMachine(req.session);
+        sm.session.voterData.role = req.session.role;
+        
         res.redirect('/simulate');
     } else {
         res.redirect('/auth/login');

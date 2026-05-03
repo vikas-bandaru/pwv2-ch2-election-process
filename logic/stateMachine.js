@@ -28,6 +28,7 @@ class CivicStateMachine {
                 simulationDate: null, // User selected date
                 campaignIndex: 0,     // Progress through multiple news items
                 scamHeadline: null,   // The specific fake news that misled the voter
+                role: 'VOTER',        // VOTER, CANDIDATE, or OFFICER
                 location: {
                     constituency: null,
                     state: null,

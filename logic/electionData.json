@@ -7,5 +7,31 @@
         "West Bengal": "2026-04-29"
     },
     "announcementDate": "2026-03-15",
-    "simulationToday": "2026-04-25"
+    "simulationToday": "2026-04-25",
+    "constituencies": {
+        "West Bengal": [
+            { "name": "Bhowanipore", "pincode": "700025" },
+            { "name": "Jadavpur", "pincode": "700032" },
+            { "name": "Nandigram", "pincode": "721631" }
+        ],
+        "Tamil Nadu": [
+            { "name": "Chennai Central", "pincode": "600001" },
+            { "name": "Coimbatore South", "pincode": "641001" },
+            { "name": "Madurai Central", "pincode": "625001" }
+        ],
+        "Kerala": [
+            { "name": "Thiruvananthapuram", "pincode": "695001" },
+            { "name": "Ernakulam", "pincode": "682011" },
+            { "name": "Wayanad", "pincode": "673121" }
+        ],
+        "Assam": [
+            { "name": "Guwahati West", "pincode": "781001" },
+            { "name": "Dibrugarh", "pincode": "786001" },
+            { "name": "Silchar", "pincode": "788001" }
+        ],
+        "Puducherry": [
+            { "name": "Puducherry Town", "pincode": "605001" },
+            { "name": "Karaikal", "pincode": "609602" }
+        ]
+    }
 }

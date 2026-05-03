@@ -23,46 +23,97 @@
 
     <!-- Stage Content -->
     <div class="bg-white rounded-2xl shadow-xl p-10 border-l-8 border-eci-blue">
-        <% if (state === 'ANNOUNCEMENT') { %>
+        <% if (voterData.role !== 'VOTER' && state !== 'COUNTING') { %>
+            <div class="space-y-8 py-10 text-center">
+                <div class="text-6xl mb-6"><%= voterData.role === 'CANDIDATE' ? '📢' : '👨‍⚖️' %></div>
+                <h2 class="text-4xl font-black text-gray-900 tracking-tight">The <%= voterData.role === 'CANDIDATE' ? 'Candidate' : 'Officer' %> Portal</h2>
+                <div class="inline-block px-4 py-1.5 bg-amber-100 text-amber-700 rounded-full text-xs font-black tracking-widest uppercase mb-4">Under Construction (BETA)</div>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                    Step into the shoes of a <%= voterData.role === 'CANDIDATE' ? 'local leader filing their first nomination' : 'Presiding Officer conducting a fair mock poll' %>. 
+                    This path will soon allow you to experience the full procedural complexity of the democratic system.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto text-left pt-8">
+                    <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <div class="font-black text-eci-blue text-xs uppercase mb-1">Coming Next</div>
+                        <div class="font-bold text-gray-800"><%= voterData.role === 'CANDIDATE' ? 'Nomination & Scrutiny' : 'Mock Poll Witnessing' %></div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <div class="font-black text-eci-blue text-xs uppercase mb-1">Coming Next</div>
+                        <div class="font-bold text-gray-800"><%= voterData.role === 'CANDIDATE' ? 'Appointing Agents' : 'Sealing Form 17C' %></div>
+                    </div>
+                </div>
+                <div class="pt-10">
+                    <a href="/auth/logout" class="text-sm font-black text-eci-blue hover:underline uppercase tracking-widest">← Back to Voter Path</a>
+                </div>
+            </div>
+        <% } else if (state === 'ANNOUNCEMENT') { %>
             <div class="space-y-8">
                 <% if (!voterData.location.state) { %>
                     <div class="space-y-6">
-                        <div class="inline-block px-3 py-1 bg-blue-100 text-eci-blue rounded-full text-sm font-bold tracking-wider uppercase">Voter Verification</div>
+                        <div class="inline-block px-3 py-1 bg-blue-100 text-eci-blue rounded-full text-sm font-bold tracking-wider uppercase">Location Verification</div>
                         <h2 class="text-3xl font-extrabold text-gray-900 leading-tight">Where are you voting from?</h2>
-                        <p class="text-lg text-gray-600">To show you the correct election schedule and local context, please enter your constituency details.</p>
+                        <p class="text-lg text-gray-600">Choose your location. We will fetch the real election schedule for your constituency.</p>
                         
-                        <form action="/simulate/next-stage" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <form action="/simulate/next-stage" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6" id="locationForm">
                             <input type="hidden" name="action" value="SET_LOCATION">
                             
                             <div class="space-y-2">
                                 <label class="block text-sm font-bold text-gray-700">Select State</label>
-                                <select name="state" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-eci-blue outline-none transition">
+                                <select name="state" id="stateSelect" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-eci-blue outline-none transition">
                                     <option value="" disabled selected>Choose your state</option>
-                                    <option value="West Bengal">West Bengal</option>
-                                    <option value="Tamil Nadu">Tamil Nadu</option>
-                                    <option value="Kerala">Kerala</option>
-                                    <option value="Assam">Assam</option>
-                                    <option value="Puducherry">Puducherry</option>
+                                    <% Object.keys(electionData.constituencies).forEach(s => { %>
+                                        <option value="<%= s %>"><%= s %></option>
+                                    <% }) %>
                                 </select>
                             </div>
 
                             <div class="space-y-2">
-                                <label class="block text-sm font-bold text-gray-700">Constituency Name</label>
-                                <input type="text" name="constituency" required placeholder="e.g. Nallagandla" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-eci-blue outline-none transition">
+                                <label class="block text-sm font-bold text-gray-700">Constituency</label>
+                                <select name="constituency" id="constituencySelect" required disabled class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-eci-blue outline-none transition disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <option value="" disabled selected>Select state first</option>
+                                </select>
                             </div>
 
-                            <div class="space-y-2">
-                                <label class="block text-sm font-bold text-gray-700">Pin Code</label>
-                                <input type="text" name="pinCode" required pattern="[0-9]{6}" placeholder="6-digit PIN" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-eci-blue outline-none transition">
+                            <div class="space-y-2 md:col-span-2">
+                                <label class="block text-sm font-bold text-gray-700">Pin Code (Auto-filled)</label>
+                                <input type="text" name="pinCode" id="pincodeInput" readonly required pattern="[0-9]{6}" placeholder="Choose constituency to see PIN" class="w-full px-4 py-3 bg-gray-200 border border-gray-200 rounded-xl outline-none cursor-not-allowed">
                             </div>
 
                             <div class="md:col-span-2 pt-4">
                                 <button type="submit" class="w-full bg-eci-blue text-white px-8 py-4 rounded-xl font-bold hover:bg-blue-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-1">
                                     VERIFY LOCATION & FETCH NEWS →
                                 </button>
-                                <p class="text-center text-[10px] text-gray-400 mt-3">After verifying, you can choose your simulation start date from the news feed.</p>
                             </div>
                         </form>
+
+                        <script>
+                            const constituencyData = <%- JSON.stringify(electionData.constituencies) %>;
+                            const stateSelect = document.getElementById('stateSelect');
+                            const constituencySelect = document.getElementById('constituencySelect');
+                            const pincodeInput = document.getElementById('pincodeInput');
+
+                            stateSelect.addEventListener('change', (e) => {
+                                const state = e.target.value;
+                                const list = constituencyData[state] || [];
+                                
+                                constituencySelect.innerHTML = '<option value="" disabled selected>Choose constituency</option>';
+                                list.forEach(c => {
+                                    const opt = document.createElement('option');
+                                    opt.value = c.name;
+                                    opt.textContent = c.name;
+                                    opt.dataset.pin = c.pincode;
+                                    constituencySelect.appendChild(opt);
+                                });
+                                
+                                constituencySelect.disabled = false;
+                                pincodeInput.value = '';
+                            });
+
+                            constituencySelect.addEventListener('change', (e) => {
+                                const selectedOption = e.target.options[e.target.selectedIndex];
+                                pincodeInput.value = selectedOption.dataset.pin || '';
+                            });
+                        </script>
                     </div>
                 <% } else { %>
                     <div class="space-y-8 animate-fade-in">
