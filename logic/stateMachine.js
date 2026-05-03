@@ -102,43 +102,70 @@ class CivicStateMachine {
 
     /**
      * Butterfly Effect Calculation
-     * Outcome: Result = (Simulation_Result) + (user_vote ? 1 : 0)
+     * Outcome: Result is calculated such that the chosen candidate wins or loses by EXACTLY 1 vote.
      */
     calculateResults() {
         const voterData = this.session.voterData;
-        const simulationResult = 1000; // Base votes for opponent
-        const userVoteValue = voterData.voted ? 1 : 0;
+        const electionData = require('./electionData.json');
+        const candidates = electionData.candidates;
         
-        const candidateVotes = 1000 + userVoteValue;
-        const opponentVotes = 1001; // Opponent always has 1001 to ensure margin of 1
+        // Find the candidate the user researched/voted for (default to 'A' if none)
+        const chosenId = voterData.candidateChoice || 'A';
+        const chosenCandidate = candidates.find(c => c.id === chosenId);
 
-        // If user voted, candidate has 1001, Opponent 1001? 
-        // No, user wants Winning Margin exactly 1.
-        // If 'VOTED', user's candidate wins. (Candidate 1001, Opponent 1000)
-        // If 'INELIGIBLE' or 'SCAMMED', candidate loses by 1. (Candidate 1000, Opponent 1001)
-
-        let finalCandidateVotes, finalOpponentVotes;
+        // Simulate base votes for all candidates
+        // We want the winner to have X votes and runner-up to have X-1
+        const baseVotes = 1250; 
         
+        let resultsList = candidates.map(c => {
+            // Randomish but stable base votes
+            let votes = baseVotes - (Math.floor(Math.random() * 200)); 
+            return { ...c, votes };
+        });
+
+        // Sort by votes descending to find current leaders
+        resultsList.sort((a, b) => b.votes - a.votes);
+
+        // Now adjust for the Butterfly Effect
         if (voterData.voted) {
-            finalCandidateVotes = 1001;
-            finalOpponentVotes = 1000;
+            // USER VOTED: Their candidate must win by 1 vote against the current leader
+            const topCompetitor = resultsList.find(c => c.id !== chosenId);
+            const winnerVotes = topCompetitor.votes + 1;
+            
+            resultsList.forEach(c => {
+                if (c.id === chosenId) c.votes = winnerVotes;
+            });
         } else {
-            finalCandidateVotes = 1000;
-            finalOpponentVotes = 1001;
+            // USER DID NOT VOTE: Their candidate must lose by 1 vote to the current leader
+            // If the chosen candidate was already leading, we make someone else lead by 1
+            const topCompetitor = resultsList.find(c => c.id !== chosenId);
+            const winnerVotes = topCompetitor.votes;
+            
+            resultsList.forEach(c => {
+                if (c.id === chosenId) c.votes = winnerVotes - 1;
+                // Ensure top competitor is exactly 1 ahead
+                if (c.id === topCompetitor.id) c.votes = winnerVotes;
+            });
         }
 
+        // Re-sort final list
+        resultsList.sort((a, b) => b.votes - a.votes);
+        const winner = resultsList[0];
+
         return {
-            winner: voterData.voted ? 'Your Candidate' : 'Opponent',
+            constituency: voterData.location.constituency || 'Your Constituency',
+            winner: winner,
+            chosenCandidate: chosenCandidate,
             margin: 1,
-            votes: { candidate: finalCandidateVotes, opponent: finalOpponentVotes },
+            candidates: resultsList,
             voted: voterData.voted,
             isScammed: voterData.isScammed,
             hasID: voterData.hasID,
             message: voterData.voted 
-                ? "Every single vote counts. You were the difference." 
+                ? `In ${voterData.location.constituency}, every single vote counted. You were the difference that brought ${chosenCandidate.name} to victory.` 
                 : (voterData.isScammed 
-                    ? "Misinformation stole your voice. You were scammed into staying home." 
-                    : "A single vote could have changed everything. Your ID was your key, and you lost it.")
+                    ? `Misinformation stole your voice. ${chosenCandidate.name} lost by just one vote—the vote you didn't cast because of a lie.` 
+                    : `Identity is power. Because you couldn't verify your ID, ${chosenCandidate.name} fell short by a single vote. Democracy missed you today.`)
         };
     }
 }

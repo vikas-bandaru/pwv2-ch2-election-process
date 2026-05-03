@@ -1,10 +1,10 @@
 <%- include('partials/header') %>
 
-<div class="max-w-4xl mx-auto py-12 px-4 animate-fade-in">
-    <!-- Results Card -->
-    <div class="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-gray-100 relative">
+<div class="max-w-5xl mx-auto py-12 px-4 animate-fade-in">
+    <!-- Results Header Card -->
+    <div class="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-gray-100 relative mb-8">
         <!-- Top Banner -->
-        <div class="<%= results.winner === 'Your Candidate' ? 'bg-green-600' : 'bg-red-600' %> p-12 text-center relative overflow-hidden">
+        <div class="<%= results.winner.id === results.chosenCandidate.id ? 'bg-green-600' : 'bg-red-600' %> p-12 text-center relative overflow-hidden">
             <div class="absolute inset-0 opacity-10">
                 <svg class="w-full h-full" fill="none" viewBox="0 0 100 100" preserveAspectRatio="none">
                     <path d="M0 100 L100 0" stroke="white" stroke-width="1"/>
@@ -13,86 +13,123 @@
             </div>
             
             <div class="relative z-10">
-                <h2 class="text-5xl font-black text-white mb-2 tracking-tighter">FINAL VERDICT</h2>
-                <p class="text-white/80 uppercase tracking-[0.3em] font-black text-sm">The Butterfly Effect Simulation</p>
+                <h2 class="text-xs font-black text-white/70 uppercase tracking-[0.4em] mb-4">Constituency: <%= results.constituency %></h2>
+                <h1 class="text-5xl font-black text-white mb-2 tracking-tighter uppercase">
+                    <%= results.winner.id === results.chosenCandidate.id ? 'VICTORY SECURED' : 'NARROW DEFEAT' %>
+                </h1>
+                <p class="text-white/80 font-bold text-sm tracking-widest italic opacity-80">
+                    The Power of One Vote: A Butterfly Effect Simulation
+                </p>
             </div>
         </div>
 
-        <div class="p-12 space-y-12">
-            <!-- Scoreboard -->
-            <div class="flex flex-col md:flex-row justify-between items-center gap-8">
-                <div class="text-center space-y-3 group">
-                    <div class="text-xs font-black text-gray-400 uppercase tracking-widest group-hover:text-eci-blue transition-colors">Your Choice</div>
-                    <div class="text-7xl font-black text-gray-900 tracking-tighter tabular-nums"><%= results.votes.candidate %></div>
-                    <div class="w-12 h-1.5 bg-eci-blue mx-auto rounded-full opacity-20 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-
-                <div class="flex flex-col items-center">
-                    <div class="text-2xl font-black text-gray-200 mb-2 italic">VS</div>
-                    <div class="px-6 py-2 bg-gray-50 border border-gray-100 rounded-full text-xs font-black text-gray-500 uppercase tracking-widest">Margin: <%= results.margin %></div>
-                </div>
-
-                <div class="text-center space-y-3 group">
-                    <div class="text-xs font-black text-gray-400 uppercase tracking-widest group-hover:text-red-600 transition-colors">Opponent</div>
-                    <div class="text-7xl font-black text-gray-900 tracking-tighter tabular-nums"><%= results.votes.opponent %></div>
-                    <div class="w-12 h-1.5 bg-red-600 mx-auto rounded-full opacity-20 group-hover:opacity-100 transition-opacity"></div>
-                </div>
-            </div>
-
-            <!-- Big Message -->
-            <div class="bg-gray-50 rounded-[2.5rem] p-10 text-center relative overflow-hidden group">
+        <div class="p-8 md:p-12 space-y-12">
+            <!-- Summary Narrative -->
+            <div class="bg-gray-50 rounded-[2.5rem] p-10 text-center relative overflow-hidden group border border-gray-100">
                 <div class="absolute -right-10 -top-10 w-40 h-40 bg-white rounded-full opacity-50 blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
                 <h3 class="text-3xl font-black text-gray-900 mb-4 relative z-10">
-                    <%= results.winner === 'Your Candidate' ? 'Your vote won the day!' : 'A narrow defeat...' %>
+                    The Verdict
                 </h3>
-                <p class="text-xl text-gray-600 font-medium italic relative z-10 leading-relaxed">
+                <p class="text-xl text-gray-600 font-medium italic relative z-10 leading-relaxed max-w-2xl mx-auto">
                     "<%= results.message %>"
                 </p>
             </div>
 
-            <!-- Decision Audit -->
+            <!-- Candidate Tally Table -->
             <div class="space-y-6">
-                <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-4">Decision Audit Log</h4>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="p-6 rounded-3xl <%= results.hasID ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100' %> border flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-2xl <%= results.hasID ? 'bg-green-600' : 'bg-red-600' %> text-white flex items-center justify-center shrink-0">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="<%= results.hasID ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' %>"></path></svg>
-                        </div>
-                        <div>
-                            <p class="text-xs font-black text-gray-400 uppercase">Identity</p>
-                            <p class="font-bold text-gray-800"><%= results.hasID ? 'Verified' : 'Failed' %></p>
-                        </div>
-                    </div>
+                <div class="flex justify-between items-end px-2">
+                    <h4 class="text-xs font-black text-gray-400 uppercase tracking-widest">Election Tally Card</h4>
+                    <span class="text-xs font-bold text-gray-400 bg-gray-100 px-3 py-1 rounded-full uppercase tracking-tighter">Margin of Victory: 1 Vote</span>
+                </div>
+                
+                <div class="overflow-hidden rounded-[2rem] border border-gray-100 shadow-sm">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-900 text-white">
+                                <th class="px-6 py-4 text-xs font-black uppercase tracking-widest">Candidate & Party</th>
+                                <th class="px-6 py-4 text-xs font-black uppercase tracking-widest text-center">Symbol</th>
+                                <th class="px-6 py-4 text-xs font-black uppercase tracking-widest text-right">Votes Received</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            <% results.candidates.forEach((candidate, index) => { %>
+                                <tr class="group hover:bg-gray-50 transition-colors <%= candidate.id === results.winner.id ? 'bg-green-50/50' : '' %>">
+                                    <td class="px-6 py-5">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm
+                                                <%= candidate.id === results.winner.id ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-400' %>">
+                                                <%= index + 1 %>
+                                            </div>
+                                            <div>
+                                                <div class="font-bold text-gray-900 flex items-center gap-2">
+                                                    <%= candidate.name %>
+                                                    <% if (candidate.id === results.chosenCandidate.id) { %>
+                                                        <span class="text-[10px] bg-eci-blue text-white px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">Your Choice</span>
+                                                    <% } %>
+                                                    <% if (candidate.id === results.winner.id) { %>
+                                                        <span class="text-[10px] bg-green-600 text-white px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">Winner</span>
+                                                    <% } %>
+                                                </div>
+                                                <div class="text-xs text-gray-400 font-bold uppercase"><%= candidate.party %></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-5 text-center text-2xl"><%= candidate.symbol %></td>
+                                    <td class="px-6 py-5 text-right tabular-nums">
+                                        <span class="text-2xl font-black <%= candidate.id === results.winner.id ? 'text-green-600' : 'text-gray-900' %>">
+                                            <%= candidate.votes.toLocaleString() %>
+                                        </span>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                    <div class="p-6 rounded-3xl <%= !results.isScammed ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100' %> border flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-2xl <%= !results.isScammed ? 'bg-green-600' : 'bg-red-600' %> text-white flex items-center justify-center shrink-0">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="<%= !results.isScammed ? 'M9 12l2 2 4-4m5.618-4.016A3.323 3.323 0 0010.603 2L9 22.887a1 1 0 01-1.07.742c-3.15-.394-5.83-2.615-6.93-5.54a1 1 0 01.37-1.16l14.248-11.943a1 1 0 011.605.352z' : 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' %>"></path></svg>
-                        </div>
-                        <div>
-                            <p class="text-xs font-black text-gray-400 uppercase">Information</p>
-                            <p class="font-bold text-gray-800"><%= results.isScammed ? 'Misinformed' : 'Grounded' %></p>
-                        </div>
+            <!-- Decision Audit (Re-styled) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="p-6 rounded-3xl <%= results.hasID ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100' %> border flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-2xl <%= results.hasID ? 'bg-green-600' : 'bg-red-600' %> text-white flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="<%= results.hasID ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12' %>"></path></svg>
                     </div>
+                    <div>
+                        <p class="text-xs font-black text-gray-400 uppercase tracking-tighter">Identity</p>
+                        <p class="font-bold text-gray-800"><%= results.hasID ? 'Verified' : 'Failed' %></p>
+                    </div>
+                </div>
 
-                    <div class="p-6 rounded-3xl <%= results.voted ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100' %> border flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-2xl <%= results.voted ? 'bg-green-600' : 'bg-red-600' %> text-white flex items-center justify-center shrink-0">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"></path></svg>
-                        </div>
-                        <div>
-                            <p class="text-xs font-black text-gray-400 uppercase">Action</p>
-                            <p class="font-bold text-gray-800"><%= results.voted ? 'Voted' : 'No Action' %></p>
-                        </div>
+                <div class="p-6 rounded-3xl <%= !results.isScammed ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100' %> border flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-2xl <%= !results.isScammed ? 'bg-green-600' : 'bg-red-600' %> text-white flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="<%= !results.isScammed ? 'M9 12l2 2 4-4m5.618-4.016A3.323 3.323 0 0010.603 2L9 22.887a1 1 0 01-1.07.742c-3.15-.394-5.83-2.615-6.93-5.54a1 1 0 01.37-1.16l14.248-11.943a1 1 0 011.605.352z' : 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z' %>"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-xs font-black text-gray-400 uppercase tracking-tighter">Information</p>
+                        <p class="font-bold text-gray-800"><%= results.isScammed ? 'Misinformed' : 'Grounded' %></p>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-3xl <%= results.voted ? 'bg-green-50 border-green-100' : 'bg-red-50 border-red-100' %> border flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-2xl <%= results.voted ? 'bg-green-600' : 'bg-red-600' %> text-white flex items-center justify-center shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5"></path></svg>
+                    </div>
+                    <div>
+                        <p class="text-xs font-black text-gray-400 uppercase tracking-tighter">Final Action</p>
+                        <p class="font-bold text-gray-800"><%= results.voted ? 'Voted' : 'Lost Access' %></p>
                     </div>
                 </div>
             </div>
 
             <!-- Footer Action -->
-            <div class="pt-8 text-center">
+            <div class="pt-8 text-center flex flex-col items-center gap-6">
                 <a href="/api/reset-session" class="inline-flex items-center gap-3 bg-gray-900 text-white px-12 py-5 rounded-3xl font-black text-xl hover:bg-black transition-all shadow-2xl hover:shadow-gray-200 transform hover:-translate-y-1 group">
                     <svg class="w-6 h-6 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     RESTART JOURNEY
                 </a>
-                <p class="mt-6 text-sm text-gray-400 font-bold uppercase tracking-widest">Attempt #<%= locals.attemptCount || 1 %></p>
+                <div class="flex flex-col items-center gap-1">
+                    <p class="text-[10px] text-gray-400 font-black uppercase tracking-[0.3em]">Simulation Complete</p>
+                    <p class="text-xs text-gray-300 font-bold uppercase tracking-widest">Attempt #<%= locals.attemptCount || 1 %></p>
+                </div>
             </div>
         </div>
     </div>

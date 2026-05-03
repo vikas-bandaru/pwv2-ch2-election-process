@@ -12,25 +12,6 @@ const electionData = require('../logic/electionData.json');
 router.get('/test', (req, res) => res.send('ok'));
 
 // ── Shared candidate data (used in PREP research + POLL EVM) ─────────────────
-function getCandidateData() {
-    return [
-        { id: 'A', name: 'Lydan',  nickname: 'The Well-Builder',  symbol: '🪣', party: 'Jal Shakti Party',
-          promise: 'Clean water for every house in 2 years.',
-          form26: { assets: '₹4 lakh — one house, some gold.', liabilities: '₹1.5 lakh bank loan.', cases: 'None.', education: 'Class 10 pass.' } },
-        { id: 'B', name: 'Syrin',  nickname: 'The Skill-Teacher', symbol: '📚', party: 'Kaushal Vikas Dal',
-          promise: 'Free skill school for all village youth.',
-          form26: { assets: '₹12 lakh — land and savings.', liabilities: 'No loans.', cases: '1 old case — traffic fine. Settled.', education: 'Graduate.' } },
-        { id: 'C', name: 'Ptorik', nickname: 'The Road-Fixer',    symbol: '🛣️', party: 'Sadak Sudhar Manch',
-          promise: 'Fix all broken roads in 6 months.',
-          form26: { assets: '₹88 lakh — business and property.', liabilities: '₹30 lakh business loan.', cases: '2 cases — both still in court.', education: 'MBA.' } },
-        { id: 'D', name: 'Vaxen',  nickname: 'The Health Worker', symbol: '🏥', party: 'Swasthya Seva Party',
-          promise: 'Free health check-up camp every month.',
-          form26: { assets: '₹6 lakh — house and savings.', liabilities: 'No loans.', cases: 'None.', education: 'Nursing diploma.' } },
-        { id: 'E', name: 'Krylo',  nickname: 'The Law-Maker',     symbol: '⚖️', party: 'Niyam Rakshak Dal',
-          promise: 'Make a new law to stop farm fires.',
-          form26: { assets: '₹2.3 crore — flats and gold.', liabilities: '₹60 lakh loans.', cases: '5 cases — still going on.', education: 'Law degree.' } }
-    ];
-}
 function getForm26Analogies() {
     return {
         assets:      { label: 'Property & Gold',   tip: 'Things they own — house, land, gold, money in bank.' },
@@ -169,7 +150,7 @@ router.get('/', async (req, res) => {
         extraData.canVote = today <= timeline.poll.date;
 
         // Candidate data available during PREP (for research) and POLL (for EVM)
-        extraData.candidates = getCandidateData();
+        extraData.candidates = electionData.candidates;
         extraData.form26Analogies = getForm26Analogies();
     } else if (voterData.state === States.CAMPAIGN) {
 
@@ -205,7 +186,7 @@ router.get('/', async (req, res) => {
         req.trackApiUsage('MAPS');
 
         // Use shared helpers — same data shown in PREP research and POLL EVM
-        extraData.candidates = getCandidateData();
+        extraData.candidates = electionData.candidates;
         extraData.form26Analogies = getForm26Analogies();
     }
 
