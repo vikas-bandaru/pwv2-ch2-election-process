@@ -56,6 +56,28 @@
             transform: scale(1.02);
             z-index: 10;
         }
+        /* Desktop hover lift for news cards */
+        @media (hover: hover) {
+            .news-newspaper:hover {
+                transform: translateY(-6px) rotate(-1deg);
+                box-shadow: 8px 12px 0px #d5cfc4;
+                transition: transform 0.25s ease, box-shadow 0.25s ease;
+            }
+            .news-mobile:hover {
+                transform: translateY(-6px) scale(1.03);
+                box-shadow: 0 20px 40px -8px rgba(0,0,0,0.5);
+                transition: transform 0.25s ease, box-shadow 0.25s ease;
+            }
+            .news-website:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 20px 40px -8px rgba(0,51,153,0.15);
+                transition: transform 0.25s ease, box-shadow 0.25s ease;
+            }
+        }
+        /* Mobile: hide body text in news cards to reduce scroll */
+        @media (max-width: 767px) {
+            .news-body-text { display: none; }
+        }
 
         /* ── LogicAnalogy Tooltip Component ──────────────────────────── */
         .logic-analogy {
@@ -106,22 +128,26 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
-    <header class="bg-eci-blue text-white shadow-lg p-4">
-        <div class="container mx-auto flex justify-between items-center gap-4">
-            <h1 class="text-2xl font-bold tracking-tight flex-shrink-0">CivicLogic: The One-Vote Simulator</h1>
+    <header class="bg-eci-blue text-white shadow-lg p-3 md:p-4">
+        <div class="container mx-auto flex justify-between items-center gap-2">
+            <!-- Full title on md+, short on mobile -->
+            <h1 class="font-bold tracking-tight flex-shrink-0">
+                <span class="hidden md:inline text-2xl">CivicLogic: The One-Vote Simulator</span>
+                <span class="md:hidden text-lg">CivicLogic</span>
+            </h1>
 
-            <div class="flex items-center gap-3 flex-wrap justify-end">
-                <!-- Demo notice — shown always -->
-                <div class="flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-xs font-semibold">
-                    <span class="relative flex h-2 w-2">
+            <div class="flex items-center gap-2 md:gap-3">
+                <!-- Demo badge: dot only on mobile, full text on md+ -->
+                <div class="flex items-center gap-1.5 bg-white/10 border border-white/20 rounded-full px-2.5 py-1 md:px-4 md:py-1.5 text-xs font-semibold">
+                    <span class="relative flex h-2 w-2 flex-shrink-0">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-300 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-yellow-400"></span>
                     </span>
-                    Live Demo Preview
+                    <span class="hidden md:inline">Live Demo Preview</span>
                 </div>
 
                 <% if (locals.voterName) { %>
-                    <div class="text-sm font-medium opacity-90">
+                    <div class="text-xs md:text-sm font-medium opacity-90 truncate max-w-[100px] md:max-w-none">
                         👤 <span class="font-bold"><%= locals.voterName %></span>
                     </div>
                 <% } %>

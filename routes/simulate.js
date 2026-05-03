@@ -8,6 +8,36 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'MOCK_KEY');
 
 router.get('/test', (req, res) => res.send('ok'));
 
+// ── Shared candidate data (used in PREP research + POLL EVM) ─────────────────
+function getCandidateData() {
+    return [
+        { id: 'A', name: 'Lydan',  nickname: 'The Well-Builder',  symbol: '🪣', party: 'Jal Shakti Party',
+          promise: 'Clean water for every house in 2 years.',
+          form26: { assets: '₹4 lakh — one house, some gold.', liabilities: '₹1.5 lakh bank loan.', cases: 'None.', education: 'Class 10 pass.' } },
+        { id: 'B', name: 'Syrin',  nickname: 'The Skill-Teacher', symbol: '📚', party: 'Kaushal Vikas Dal',
+          promise: 'Free skill school for all village youth.',
+          form26: { assets: '₹12 lakh — land and savings.', liabilities: 'No loans.', cases: '1 old case — traffic fine. Settled.', education: 'Graduate.' } },
+        { id: 'C', name: 'Ptorik', nickname: 'The Road-Fixer',    symbol: '🛣️', party: 'Sadak Sudhar Manch',
+          promise: 'Fix all broken roads in 6 months.',
+          form26: { assets: '₹88 lakh — business and property.', liabilities: '₹30 lakh business loan.', cases: '2 cases — both still in court.', education: 'MBA.' } },
+        { id: 'D', name: 'Vaxen',  nickname: 'The Health Worker', symbol: '🏥', party: 'Swasthya Seva Party',
+          promise: 'Free health check-up camp every month.',
+          form26: { assets: '₹6 lakh — house and savings.', liabilities: 'No loans.', cases: 'None.', education: 'Nursing diploma.' } },
+        { id: 'E', name: 'Krylo',  nickname: 'The Law-Maker',     symbol: '⚖️', party: 'Niyam Rakshak Dal',
+          promise: 'Make a new law to stop farm fires.',
+          form26: { assets: '₹2.3 crore — flats and gold.', liabilities: '₹60 lakh loans.', cases: '5 cases — still going on.', education: 'Law degree.' } }
+    ];
+}
+function getForm26Analogies() {
+    return {
+        assets:      { label: 'Property & Gold',   tip: 'Things they own — house, land, gold, money in bank.' },
+        liabilities: { label: 'Bank Loans',         tip: 'Money they still owe to others.' },
+        cases:       { label: 'Police Cases',        tip: 'Times police or court said they did something wrong.' },
+        education:   { label: 'School / College',   tip: 'How much they studied in school.' }
+    };
+}
+
+
 router.get('/', async (req, res) => {
     if (!req.session.voterName) return res.redirect('/auth/login');
 
@@ -136,7 +166,12 @@ router.get('/', async (req, res) => {
         extraData.today = today.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
         extraData.isEnrollmentOpen = today <= timeline.enrollment.date;
         extraData.canVote = today <= timeline.poll.date;
+
+        // Candidate data available during PREP (for research) and POLL (for EVM)
+        extraData.candidates = getCandidateData();
+        extraData.form26Analogies = getForm26Analogies();
     } else if (voterData.state === States.CAMPAIGN) {
+
         if (req.trackApiUsage('GEMINI')) {
             try {
                 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -168,85 +203,11 @@ router.get('/', async (req, res) => {
         extraData.mapsUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=15&size=600x300&markers=color:red%7C${lat},${lng}&key=${apiKey}`;
         req.trackApiUsage('MAPS');
 
-        // Fictional candidates — village-simple manifestos
-        // Disclaimer: These names are made up. We don't want to pick real names
-        // because we don't want to pick sides. This is just for learning.
-        extraData.candidates = [
-            {
-                id: 'A',
-                name: 'Lydan',
-                nickname: 'The Well-Builder',
-                symbol: '🪣',
-                promise: 'Clean water for every house in 2 years.',
-                form26: {
-                    assets: '₹4 lakh — one house, some gold.',
-                    liabilities: '₹1.5 lakh bank loan.',
-                    cases: 'None.',
-                    education: 'Class 10 pass.'
-                }
-            },
-            {
-                id: 'B',
-                name: 'Syrin',
-                nickname: 'The Skill-Teacher',
-                symbol: '📚',
-                promise: 'Free skill school for all village youth.',
-                form26: {
-                    assets: '₹12 lakh — land and savings.',
-                    liabilities: 'No loans.',
-                    cases: '1 old case — traffic fine. Settled.',
-                    education: 'Graduate.'
-                }
-            },
-            {
-                id: 'C',
-                name: 'Ptorik',
-                nickname: 'The Road-Fixer',
-                symbol: '🛣️',
-                promise: 'Fix all broken roads in 6 months.',
-                form26: {
-                    assets: '₹88 lakh — business and property.',
-                    liabilities: '₹30 lakh business loan.',
-                    cases: '2 cases — both still in court.',
-                    education: 'MBA.'
-                }
-            },
-            {
-                id: 'D',
-                name: 'Vaxen',
-                nickname: 'The Health Worker',
-                symbol: '🏥',
-                promise: 'Free health check-up camp every month.',
-                form26: {
-                    assets: '₹6 lakh — house and savings.',
-                    liabilities: 'No loans.',
-                    cases: 'None.',
-                    education: 'Nursing diploma.'
-                }
-            },
-            {
-                id: 'E',
-                name: 'Krylo',
-                nickname: 'The Law-Maker',
-                symbol: '⚖️',
-                promise: 'Make a new law to stop farm fires.',
-                form26: {
-                    assets: '₹2.3 crore — flats and gold.',
-                    liabilities: '₹60 lakh loans.',
-                    cases: '5 cases — still going on.',
-                    education: 'Law degree.'
-                }
-            }
-        ];
-
-        // Form 26 field analogies for LogicAnalogy tooltip
-        extraData.form26Analogies = {
-            assets:      { label: 'Property & Gold', tip: 'Things they own — house, land, gold, money in bank.' },
-            liabilities: { label: 'Bank Loans',      tip: 'Money they still owe to others.' },
-            cases:       { label: 'Police Cases',    tip: 'Times police or court said they did something wrong.' },
-            education:   { label: 'School / College', tip: 'How much they studied in school.' }
-        };
+        // Use shared helpers — same data shown in PREP research and POLL EVM
+        extraData.candidates = getCandidateData();
+        extraData.form26Analogies = getForm26Analogies();
     }
+
 
     const electionData = require('../logic/electionData.json');
 

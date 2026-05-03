@@ -123,7 +123,11 @@
                                 <p class="text-xs font-black uppercase tracking-widest text-gray-400">📅 Choose Your Simulation Start Date</p>
                                 <div class="h-px flex-1 bg-gray-100"></div>
                             </div>
-                            <p class="text-sm text-gray-500 text-center">Each news item below represents a real moment in the <strong><%= voterData.location.state %></strong> election cycle. Click the one that matches where you want to begin your journey.</p>
+                            <p class="text-sm text-gray-600 text-center">
+                                Each card below is a real moment in the <strong><%= voterData.location.state %></strong> election.
+                                <strong class="text-gray-900">Click the date you want to start from.</strong>
+                            </p>
+                            <p class="text-xs text-center text-eci-blue font-bold md:hidden">👆 Tap a card to select your date</p>
 
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
                                 <% extraData.newsPhases.forEach((phase, i) => { %>
@@ -136,10 +140,10 @@
                                         <input type="hidden" name="simulationDate" value="<%= phase.isoDate %>">
                                         <button type="submit" class="<%= typeClasses %> <%= isActive ? 'news-item-active' : '' %> p-6 cursor-pointer transition-all text-left w-full group relative overflow-hidden">
                                             <% if (phase.type === 'newspaper') { %>
-                                                <p class="text-[10px] uppercase tracking-tighter text-gray-500 mb-1"><%= phase.source %> • <%= phase.date %></p>
+                                            <p class="text-[10px] uppercase tracking-tighter text-gray-500 mb-1"><%= phase.source %> • <%= phase.date %></p>
                                                 <div class="w-full h-px bg-gray-200 mb-3"></div>
                                                 <h4 class="font-serif text-lg font-bold text-gray-900 leading-snug mb-3 group-hover:text-eci-blue transition-colors"><%= phase.headline %></h4>
-                                                <p class="text-[10px] text-gray-600 leading-snug"><%= phase.body %></p>
+                                                <p class="news-body-text text-[10px] text-gray-600 leading-snug"><%= phase.body %></p>
                                                 <p class="text-[9px] font-black text-eci-blue uppercase tracking-widest mt-4 opacity-70"><%= phase.phase %></p>
                                             <% } else if (phase.type === 'mobile') { %>
                                                 <div class="absolute top-2 left-1/2 -translate-x-1/2 w-10 h-3 bg-gray-700 rounded-full"></div>
@@ -150,7 +154,7 @@
                                                         <span class="ml-auto text-[8px] text-gray-500"><%= phase.date %></span>
                                                     </div>
                                                     <h4 class="text-sm font-black text-white leading-tight"><%= phase.headline %></h4>
-                                                    <p class="text-[9px] text-gray-400 leading-snug"><%= phase.body %></p>
+                                                    <p class="news-body-text text-[9px] text-gray-400 leading-snug"><%= phase.body %></p>
                                                     <p class="text-[9px] font-black text-eci-orange uppercase tracking-widest mt-2"><%= phase.phase %></p>
                                                 </div>
                                             <% } else { %>
@@ -159,7 +163,7 @@
                                                     <span class="text-[8px] text-gray-400"><%= phase.date %></span>
                                                 </div>
                                                 <h4 class="text-base font-black text-gray-900 leading-snug mb-2 group-hover:text-eci-blue transition-colors"><%= phase.headline %></h4>
-                                                <p class="text-[10px] text-gray-500 leading-snug"><%= phase.body %></p>
+                                                <p class="news-body-text text-[10px] text-gray-500 leading-snug"><%= phase.body %></p>
                                                 <p class="text-[9px] font-black text-eci-blue uppercase tracking-widest mt-4 opacity-70"><%= phase.phase %></p>
                                             <% } %>
                                             <% if (isActive) { %>
@@ -397,15 +401,54 @@
                     function togglePrepInfo(id) {
                         const el = document.getElementById('info-' + id);
                         const isHidden = el.classList.contains('hidden');
-                        
-                        // Close all others
                         document.querySelectorAll('[id^="info-"]').forEach(item => item.classList.add('hidden'));
-                        
-                        if (isHidden) {
-                            el.classList.remove('hidden');
-                        }
+                        if (isHidden) { el.classList.remove('hidden'); }
                     }
                 </script>
+
+                <!-- ── Know Your Candidates (Campaign Research) ──────────── -->
+                <div class="space-y-5 pt-4 border-t border-gray-100">
+                    <div>
+                        <h3 class="text-2xl font-black text-gray-900">👀 Know Your Candidates</h3>
+                        <p class="text-sm text-gray-500 mt-1">Read their details now. On Voting Day, you will only see their <strong>symbol</strong> and <strong>party name</strong>.</p>
+                        <p class="text-xs text-eci-blue font-bold mt-1">⚠️ Remember the symbol of the person you want to vote for!</p>
+                    </div>
+
+                    <div class="p-3 bg-yellow-50 border border-yellow-200 rounded-xl text-xs text-yellow-800 font-semibold italic">
+                        ⚠️ These names are made up. We don't want to pick real names because we don't want to pick sides. This is just for learning.
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                        <% extraData.candidates.forEach(function(c) { %>
+                            <div class="p-5 bg-white border-2 border-gray-100 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <span class="text-3xl"><%= c.symbol %></span>
+                                    <div>
+                                        <p class="text-xs font-black text-gray-400 uppercase tracking-widest"><%= c.party %></p>
+                                        <p class="text-lg font-black text-gray-900"><%= c.name %></p>
+                                        <p class="text-xs text-eci-blue font-bold"><%= c.nickname %></p>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-gray-700 font-medium mb-3 bg-blue-50 rounded-xl px-3 py-2">"<%= c.promise %>"</p>
+                                <div class="space-y-1 text-xs text-gray-500 border-t border-gray-100 pt-2">
+                                    <p class="font-black text-gray-400 uppercase tracking-wider text-[10px] mb-1">Form 26 (public report card):</p>
+                                    <p><span class="logic-analogy"><%= extraData.form26Analogies.assets.label %><span class="analogy-bubble"><%= extraData.form26Analogies.assets.tip %></span></span>: <%= c.form26.assets %></p>
+                                    <p><span class="logic-analogy"><%= extraData.form26Analogies.liabilities.label %><span class="analogy-bubble"><%= extraData.form26Analogies.liabilities.tip %></span></span>: <%= c.form26.liabilities %></p>
+                                    <p><span class="logic-analogy"><%= extraData.form26Analogies.cases.label %><span class="analogy-bubble"><%= extraData.form26Analogies.cases.tip %></span></span>: <%= c.form26.cases %></p>
+                                    <p><span class="logic-analogy"><%= extraData.form26Analogies.education.label %><span class="analogy-bubble"><%= extraData.form26Analogies.education.tip %></span></span>: <%= c.form26.education %></p>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+
+                    <div class="p-4 bg-eci-blue text-white rounded-2xl text-sm font-bold flex gap-3 items-start">
+                        <span class="text-2xl">🗳️</span>
+                        <div>
+                            <p class="font-black mb-1">On Voting Day — remember only the SYMBOL!</p>
+                            <p class="font-medium opacity-90">The EVM machine shows the symbol and party name. The candidate's name is also shown. Press the button next to your choice.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         <% } else if (state === 'CAMPAIGN') { %>
             <div class="space-y-10 animate-fade-in">
@@ -426,44 +469,44 @@
                     </div>
                 </div>
 
-                <div class="space-y-2">
-                    <p class="text-xl text-gray-600 font-medium">Two stories. One is true. One is a lie.</p>
-                    <p class="text-lg text-gray-500">Pick the one you trust.</p>
+                <div class="space-y-1">
+                    <p class="text-base md:text-xl text-gray-600 font-medium">Two stories. One is true. One is a lie.</p>
+                    <p class="text-sm md:text-lg text-gray-500">Pick the one you trust. Tap to choose.</p>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
-                    <!-- Headline A (Fake) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mt-4">
+                    <!-- News A (Fake) -->
                     <form action="/simulate/next-stage" method="POST" class="contents">
                         <input type="hidden" name="action" value="NEXT_NEWS">
                         <input type="hidden" name="isScammed" value="true">
                         <input type="hidden" name="scamHeadline" value="<%= extraData.headlines.fake %>">
-                        <button type="submit" class="group relative overflow-hidden p-10 bg-white border-2 border-gray-100 rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:border-eci-orange transition-all duration-500 text-left">
-                            <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-100 transition-opacity">
-                                <svg class="w-12 h-12 text-eci-orange" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <button type="submit" class="group relative overflow-hidden p-6 md:p-10 bg-white border-2 border-gray-100 rounded-[2rem] md:rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:border-eci-orange active:scale-95 transition-all duration-300 text-left w-full">
+                            <div class="absolute top-0 right-0 p-4 md:p-6 opacity-10 group-hover:opacity-100 transition-opacity">
+                                <svg class="w-8 h-8 md:w-12 md:h-12 text-eci-orange" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                             </div>
-                            <span class="text-xs font-black text-gray-400 uppercase tracking-widest block mb-4 group-hover:text-eci-orange transition-colors">News A</span>
-                            <p class="text-2xl font-black text-gray-800 leading-tight group-hover:text-gray-900 transition-colors">
+                            <span class="text-xs font-black text-gray-400 uppercase tracking-widest block mb-2 md:mb-4 group-hover:text-eci-orange transition-colors">News A</span>
+                            <p class="text-lg md:text-2xl font-black text-gray-800 leading-tight group-hover:text-gray-900 transition-colors">
                                 "<%= extraData.headlines.fake %>"
                             </p>
-                            <div class="mt-8 flex items-center gap-2 text-eci-orange font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div class="mt-4 md:mt-8 flex items-center gap-2 text-eci-orange font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">
                                 This is my answer <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                             </div>
                         </button>
                     </form>
 
-                    <!-- Headline B (Real) -->
+                    <!-- News B (Real) -->
                     <form action="/simulate/next-stage" method="POST" class="contents">
                         <input type="hidden" name="action" value="NEXT_NEWS">
                         <input type="hidden" name="isScammed" value="">
-                        <button type="submit" class="group relative overflow-hidden p-10 bg-white border-2 border-gray-100 rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:border-eci-blue transition-all duration-500 text-left">
-                            <div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-100 transition-opacity">
-                                <svg class="w-12 h-12 text-eci-blue" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        <button type="submit" class="group relative overflow-hidden p-6 md:p-10 bg-white border-2 border-gray-100 rounded-[2rem] md:rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:border-eci-blue active:scale-95 transition-all duration-300 text-left w-full">
+                            <div class="absolute top-0 right-0 p-4 md:p-6 opacity-10 group-hover:opacity-100 transition-opacity">
+                                <svg class="w-8 h-8 md:w-12 md:h-12 text-eci-blue" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
                             </div>
-                            <span class="text-xs font-black text-gray-400 uppercase tracking-widest block mb-4 group-hover:text-eci-blue transition-colors">News B</span>
-                            <p class="text-2xl font-black text-gray-800 leading-tight group-hover:text-gray-900 transition-colors">
+                            <span class="text-xs font-black text-gray-400 uppercase tracking-widest block mb-2 md:mb-4 group-hover:text-eci-blue transition-colors">News B</span>
+                            <p class="text-lg md:text-2xl font-black text-gray-800 leading-tight group-hover:text-gray-900 transition-colors">
                                 "<%= extraData.headlines.real %>"
                             </p>
-                            <div class="mt-8 flex items-center gap-2 text-eci-blue font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div class="mt-4 md:mt-8 flex items-center gap-2 text-eci-blue font-bold text-sm opacity-0 group-hover:opacity-100 transition-opacity">
                                 This is my answer <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
                             </div>
                         </button>
@@ -472,101 +515,87 @@
 
                 <div class="bg-blue-50 border border-blue-100 p-8 rounded-3xl flex gap-6 items-center">
                     <div class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-eci-blue shrink-0 text-2xl">🤔</div>
-                    <div class="space-y-1">
-                        <p class="text-blue-900 font-black">How to spot a lie?</p>
-                        <p class="text-blue-800 text-sm">Fake news sounds too good or too scary.</p>
-                        <p class="text-blue-800 text-sm">Real news uses normal, calm words.</p>
-                        <p class="text-blue-800 text-sm">Check: Does any official website say this?</p>
-                    </div>
-                </div>
-            </div>
-        <% } else if (state === 'POLL') { %>
-            <div class="space-y-10 animate-fade-in">
-                <div class="flex items-center gap-4 border-b border-gray-100 pb-8">
-                    <div class="w-16 h-16 bg-eci-blue text-white rounded-3xl flex items-center justify-center shadow-lg shadow-blue-100 text-3xl">🗳️</div>
+                                    <p class="text-blue-800 text-sm">Check: Does any official website say this?</p>
+                                </div>
+                <% } else if (state === 'POLL') { %>
+            <div class="space-y-8 animate-fade-in">
+                <!-- Header -->
+                <div class="flex items-center gap-4 border-b border-gray-100 pb-6">
+                    <div class="w-14 h-14 bg-eci-blue text-white rounded-3xl flex items-center justify-center shadow-lg text-2xl">🗳️</div>
                     <div>
-                        <h2 class="text-4xl font-black text-gray-900 tracking-tight">It's Voting Day!</h2>
-                        <p class="text-lg text-gray-500 font-medium">You are at your booth. Pick one person.</p>
+                        <h2 class="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">It's Voting Day!</h2>
+                        <p class="text-base md:text-lg text-gray-500 font-medium"><%= voterData.location.constituency %> — Booth No. 142</p>
                     </div>
                 </div>
 
                 <% if (voterData.hasID && !voterData.isScammed) { %>
 
-                    <!-- Booth location map -->
-                    <div class="relative rounded-[2rem] overflow-hidden shadow-xl border-4 border-white">
-                        <img src="<%= extraData.mapsUrl %>" alt="Booth Location" class="w-full h-52 object-cover">
-                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-                            <p class="text-white font-black text-lg"><%= voterData.location.constituency %> Govt School</p>
-                            <p class="text-gray-300 text-sm">Booth No. 142 | Ground Floor, Room 4</p>
+                <!-- ── 3 Phases of Voting Day ────────────────────────────── -->
+                <div class="space-y-5">
+
+                    <!-- Phase 1: Identification -->
+                    <div class="bg-white border-2 border-green-100 rounded-2xl p-5 flex gap-4 items-start">
+                        <div class="w-10 h-10 bg-green-500 text-white rounded-xl flex items-center justify-center font-black text-lg shrink-0">1</div>
+                        <div class="space-y-1">
+                            <p class="font-black text-gray-900 text-lg">🪪 Identification</p>
+                            <p class="text-sm text-gray-600">The officer finds your name in the voter list.</p>
+                            <p class="text-sm text-gray-600">You show your <strong>Voter ID (EPIC card)</strong>. Officer marks your name as present.</p>
+                            <div class="mt-2 text-green-700 text-xs font-black bg-green-50 rounded-xl px-3 py-2 w-fit">✅ Identity confirmed!</div>
                         </div>
                     </div>
 
-                    <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl text-sm text-blue-900 font-bold">
-                        ✅ Your name is in the list. Your ID is ready. You can vote now.
+                    <!-- Phase 2: Inking -->
+                    <div class="bg-white border-2 border-blue-100 rounded-2xl p-5 flex gap-4 items-start">
+                        <div class="w-10 h-10 bg-eci-blue text-white rounded-xl flex items-center justify-center font-black text-lg shrink-0">2</div>
+                        <div class="space-y-1">
+                            <p class="font-black text-gray-900 text-lg">☝️ Inking</p>
+                            <p class="text-sm text-gray-600">The officer applies <strong>indelible (permanent) ink</strong> on your left index finger.</p>
+                            <p class="text-sm text-gray-600">This ink stays for days. It proves you voted. No one can vote twice.</p>
+                            <div class="mt-2 text-eci-blue text-xs font-black bg-blue-50 rounded-xl px-3 py-2 w-fit">☝️ Ink applied — you cannot vote again!</div>
+                        </div>
                     </div>
 
-                    <!-- Disclaimer -->
-                    <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-2xl text-xs text-yellow-800 font-semibold italic">
-                        ⚠️ These names are made up. We don't want to pick real names because we don't want to pick sides. This is just for learning.
-                    </div>
+                    <!-- Phase 3: EVM Voting -->
+                    <div class="bg-white border-2 border-gray-100 rounded-2xl p-5 space-y-4">
+                        <div class="flex gap-4 items-start">
+                            <div class="w-10 h-10 bg-gray-900 text-white rounded-xl flex items-center justify-center font-black text-lg shrink-0">3</div>
+                            <div>
+                                <p class="font-black text-gray-900 text-lg">🖲️ Vote on the EVM Machine</p>
+                                <p class="text-sm text-gray-600">You step into a <strong>secret booth</strong>. No one can see you vote.</p>
+                                <p class="text-sm text-gray-600 mt-1">The machine shows <strong>symbol + party + name</strong>. Press the blue button next to your choice.</p>
+                            </div>
+                        </div>
 
-                    <!-- Candidate Cards -->
-                    <div class="space-y-4">
-                        <h3 class="text-xl font-black text-gray-800">Read each person's info. Then vote.</h3>
-                        <p class="text-sm text-gray-500">Hover the <span class="logic-analogy text-xs">orange words<span class="analogy-bubble">Village Analogy appears here!</span></span> to understand hard words.</p>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 mt-4">
-                        <% extraData.candidates.forEach(function(c) { %>
-                            <form action="/simulate/next-stage" method="POST">
-                                <input type="hidden" name="action" value="VOTE">
-                                <input type="hidden" name="candidateChoice" value="<%= c.id %>">
-                                <button type="submit" class="group w-full text-left p-6 bg-white border-2 border-gray-100 rounded-3xl shadow-sm hover:shadow-xl hover:border-eci-blue transition-all duration-300">
-                                    <div class="flex items-center gap-3 mb-4">
-                                        <span class="text-3xl"><%= c.symbol %></span>
-                                        <div>
-                                            <p class="text-xs font-black text-gray-400 uppercase tracking-widest"><%= c.nickname %></p>
-                                            <p class="text-xl font-black text-gray-900"><%= c.name %></p>
+                        <!-- EVM mockup -->
+                        <div class="bg-gray-900 rounded-2xl p-4 md:p-5 space-y-2.5 max-w-sm mx-auto shadow-2xl">
+                            <p class="text-gray-400 text-[10px] font-black uppercase tracking-widest text-center mb-3">EVM — Press the Blue Button to Vote</p>
+                            <% extraData.candidates.forEach(function(c) { %>
+                                <form action="/simulate/next-stage" method="POST">
+                                    <input type="hidden" name="action" value="VOTE">
+                                    <input type="hidden" name="candidateChoice" value="<%= c.id %>">
+                                    <button type="submit" class="group w-full flex items-center gap-3 bg-gray-800 hover:bg-gray-700 active:scale-95 border border-gray-600 hover:border-blue-400 rounded-xl px-4 py-3 transition-all duration-200">
+                                        <span class="text-2xl"><%= c.symbol %></span>
+                                        <div class="text-left flex-1 min-w-0">
+                                            <p class="text-white font-black text-sm leading-tight truncate"><%= c.party %></p>
+                                            <p class="text-gray-400 text-xs truncate"><%= c.name %></p>
                                         </div>
-                                    </div>
-                                    <p class="text-sm font-bold text-eci-blue mb-4 bg-blue-50 rounded-xl px-3 py-2">"<%= c.promise %>"</p>
+                                        <div class="w-6 h-6 bg-blue-600 group-hover:bg-blue-400 rounded-full flex-shrink-0 border-2 border-blue-300 transition-colors"></div>
+                                    </button>
+                                </form>
+                            <% }); %>
+                        </div>
 
-                                    <!-- Form 26 info with LogicAnalogy -->
-                                    <div class="space-y-1.5 text-xs text-gray-600 border-t border-gray-100 pt-3">
-                                        <p class="font-black text-gray-400 uppercase tracking-wider mb-2">From their Form 26 (their public report card):</p>
-                                        <p>
-                                            <span class="logic-analogy">
-                                                <%= extraData.form26Analogies.assets.label %>
-                                                <span class="analogy-bubble"><%= extraData.form26Analogies.assets.tip %></span>
-                                            </span>: <%= c.form26.assets %>
-                                        </p>
-                                        <p>
-                                            <span class="logic-analogy">
-                                                <%= extraData.form26Analogies.liabilities.label %>
-                                                <span class="analogy-bubble"><%= extraData.form26Analogies.liabilities.tip %></span>
-                                            </span>: <%= c.form26.liabilities %>
-                                        </p>
-                                        <p>
-                                            <span class="logic-analogy">
-                                                <%= extraData.form26Analogies.cases.label %>
-                                                <span class="analogy-bubble"><%= extraData.form26Analogies.cases.tip %></span>
-                                            </span>: <%= c.form26.cases %>
-                                        </p>
-                                        <p>
-                                            <span class="logic-analogy">
-                                                <%= extraData.form26Analogies.education.label %>
-                                                <span class="analogy-bubble"><%= extraData.form26Analogies.education.tip %></span>
-                                            </span>: <%= c.form26.education %>
-                                        </p>
-                                    </div>
-
-                                    <div class="mt-4 text-center text-eci-blue font-black text-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                                        ✅ Vote for <%= c.name %>
-                                    </div>
-                                </button>
-                            </form>
-                        <% }); %>
+                        <!-- VVPAT explanation -->
+                        <div class="flex gap-3 bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800">
+                            <span class="text-xl shrink-0">🖨️</span>
+                            <div>
+                                <p class="font-black mb-0.5">What is VVPAT?</p>
+                                <p>After pressing the button, a paper slip prints for 7 seconds behind a glass window. It shows the symbol you voted for. This is your <strong>proof</strong>. It drops into a sealed box. You cannot take it.</p>
+                            </div>
                         </div>
                     </div>
+                </div>
+
 
                 <% } else { %>
                     <!-- Ineligible voter panel -->
