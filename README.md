@@ -30,7 +30,12 @@ The application is deployed to Google Cloud Run: [pwv2-election-process-live](ht
 
 ### 🕵️ Information War Dashboard
 - **"Spot the Lie"**: AI-powered campaign headlines where users must distinguish between real news and subtle misinformation.
-- **Butterfly Effect**: The simulation calculates results based on user actions, demonstrating how a single vote or a single scam can flip a constituency.
+    - **Randomized Positions**: Real news and fake news positions are randomized to prevent pattern recognition.
+    - **General Scams**: Fraudulent messages (e.g., "Scan QR for reward") act as hard blocks, preventing the user from voting to simulate immediate disqualification or safety risks.
+    - **Candidate-Linked Misinformation**: Lies specifically mentioning candidates. These allow the user to proceed to vote but set up the "Fate Frozen" consequence.
+- **"Fate Frozen" Loop**: A pedagogical feedback loop. If a voter trusts a candidate-linked lie and subsequently votes for that candidate, the simulation triggers a "Research Failure" verdict. This illustrates the long-term impact of being misled—the voter's "fate is frozen" under that representative until the next cycle, highlighting the cost of inadequate research.
+- **Butterfly Effect**: The simulation calculates results based on user actions, demonstrating how a single vote or a single scam can flip a constituency by a narrow 1-vote margin.
+
 
 ---
 

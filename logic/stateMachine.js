@@ -28,6 +28,7 @@ class CivicStateMachine {
                 simulationDate: null, // User selected date
                 campaignIndex: 0,     // Progress through multiple news items
                 scamHeadline: null,   // The specific fake news that misled the voter
+                maliciousCandidateId: null, // Candidate linked to a scam
                 role: 'VOTER',        // VOTER, CANDIDATE, or OFFICER
                 location: {
                     constituency: null,
@@ -78,6 +79,9 @@ class CivicStateMachine {
                     if (data.isScammed && !voterData.isScammed) {
                         voterData.isScammed = true;
                         voterData.scamHeadline = data.scamHeadline;
+                        if (data.isMalicious === 'true') {
+                            voterData.misledByCandidate = true;
+                        }
                     }
                     voterData.campaignIndex++;
                     if (voterData.campaignIndex >= 3) {
@@ -88,9 +92,9 @@ class CivicStateMachine {
 
             case States.POLL:
                 if (action === 'VOTE') {
-                    voterData.candidateChoice = data.candidateChoice || 'A';
-                    // User only successfully votes if they have ID and are NOT scammed
-                    voterData.voted = voterData.hasID && !voterData.isScammed;
+                    voterData.candidateChoice = data.candidateChoice;
+                    // Allow voting if scammed by candidate lie, but block for general scams
+                    voterData.voted = voterData.hasID && (!voterData.isScammed || voterData.misledByCandidate);
                     voterData.state = States.COUNTING;
                 }
                 break;
@@ -152,6 +156,16 @@ class CivicStateMachine {
         resultsList.sort((a, b) => b.votes - a.votes);
         const winner = resultsList[0];
 
+        // Special Verdict for Misinformation Loop (Fate Frozen)
+        let specialVerdict = null;
+        if (voterData.misledByCandidate && voterData.candidateChoice === voterData.maliciousCandidateId && voterData.voted) {
+            const malCand = resultsList.find(c => c.id === voterData.maliciousCandidateId);
+            specialVerdict = {
+                title: "⚠️ Research Failure: Fate Frozen",
+                message: `You were misled by fake news linked to ${malCand.name} (${malCand.party}) and ultimately chose them as your representative. Because your decision was based on misinformation rather than research, your civic impact has been compromised. You are now tied to this representative's actions until the next cycle of elections.`
+            };
+        }
+
         return {
             constituency: voterData.location.constituency || 'Your Constituency',
             winner: winner,
@@ -161,6 +175,7 @@ class CivicStateMachine {
             voted: voterData.voted,
             isScammed: voterData.isScammed,
             hasID: voterData.hasID,
+            specialVerdict: specialVerdict,
             message: voterData.voted 
                 ? `In ${voterData.location.constituency}, every single vote counted. You were the difference that brought ${chosenCandidate.name} to victory.` 
                 : (voterData.isScammed 
@@ -171,4 +186,3 @@ class CivicStateMachine {
 }
 
 module.exports = { CivicStateMachine, States };
-

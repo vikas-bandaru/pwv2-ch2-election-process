@@ -148,17 +148,21 @@ router.get('/', async (req, res) => {
         extraData.today = today.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
         extraData.isEnrollmentOpen = today <= timeline.enrollment.date;
         extraData.canVote = today <= timeline.poll.date;
-
-        // Candidate data available during PREP (for research) and POLL (for EVM)
-        extraData.candidates = electionData.candidates;
-        extraData.form26Analogies = getForm26Analogies();
     } else if (voterData.state === States.CAMPAIGN) {
+        // Pick a malicious candidate if not already picked
+        if (!voterData.maliciousCandidateId) {
+            const randomCand = electionData.candidates[Math.floor(Math.random() * electionData.candidates.length)];
+            voterData.maliciousCandidateId = randomCand.id;
+        }
+        
+        const maliciousCand = electionData.candidates.find(c => c.id === voterData.maliciousCandidateId);
 
         if (req.trackApiUsage('GEMINI')) {
             try {
                 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
                 const prompt = `Generate a JSON array of 3 objects for an information war campaign in ${voterData.location.state} elections. 
                 Each object must have a 'real' headline and a 'fake' headline. 
+                One of the fake headlines MUST involve the candidate "${maliciousCand.name}" from ${maliciousCand.party} making a false claim or being involved in a fake scheme.
                 The fake news should feel legitimate but have subtle unrealistic elements.
                 Format: [ { real: '...', fake: '...' }, { real: '...', fake: '...' }, { real: '...', fake: '...' } ]`;
                 const result = await model.generateContent(prompt);
@@ -171,7 +175,11 @@ router.get('/', async (req, res) => {
                 // Randomize positions
                 const newsItems = [
                     { text: currentHeadlines.real, isFake: false },
-                    { text: currentHeadlines.fake, isFake: true }
+                    { 
+                        text: currentHeadlines.fake, 
+                        isFake: true, 
+                        isMaliciousCand: currentHeadlines.fake.includes(maliciousCand.name) 
+                    }
                 ].sort(() => Math.random() - 0.5);
 
                 extraData.newsItems = newsItems;
@@ -179,7 +187,7 @@ router.get('/', async (req, res) => {
             } catch (e) {
                 console.error("Gemini Error:", e);
                 const fallbacks = [
-                    { real: "ECI increases polling hours in Nallagandla.", fake: "Polls to stay open 24 hours for 'convenience'." },
+                    { real: `ECI increases polling hours in ${voterData.location.constituency || 'your area'}.`, fake: `${maliciousCand.name} promises free smartphones to all voters who scan a QR code.` },
                     { real: "New security measures at sensitive booths.", fake: "Robotic guards to replace police at all polling stations." },
                     { real: "Voter ID mandatory for all citizens.", fake: "Voting now possible via WhatsApp without registration." }
                 ];
@@ -188,13 +196,21 @@ router.get('/', async (req, res) => {
                 // Randomize positions
                 const newsItems = [
                     { text: currentFallbacks.real, isFake: false },
-                    { text: currentFallbacks.fake, isFake: true }
+                    { 
+                        text: currentFallbacks.fake, 
+                        isFake: true, 
+                        isMaliciousCand: currentFallbacks.fake.includes(maliciousCand.name)
+                    }
                 ].sort(() => Math.random() - 0.5);
 
                 extraData.newsItems = newsItems;
                 extraData.newsProgress = voterData.campaignIndex + 1;
             }
         }
+
+        // Add candidates to extraData for the "Know Your Candidates" section now in CAMPAIGN
+        extraData.candidates = electionData.candidates;
+        extraData.form26Analogies = getForm26Analogies();
     } else if (voterData.state === States.POLL) {
         const lat = 17.48, lng = 78.34;
         const apiKey = process.env.GOOGLE_MAPS_API_KEY || 'YOUR_API_KEY';
@@ -248,5 +264,3 @@ router.get('/reset', (req, res) => {
 });
 
 module.exports = router;
-
-
