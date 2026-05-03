@@ -56,6 +56,53 @@
             transform: scale(1.02);
             z-index: 10;
         }
+
+        /* ── LogicAnalogy Tooltip Component ──────────────────────────── */
+        .logic-analogy {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            position: relative;
+            cursor: help;
+            border-bottom: 2px dashed var(--eci-orange);
+            font-weight: 700;
+        }
+        .logic-analogy::before {
+            content: '💡';
+            font-size: 0.7rem;
+        }
+        .logic-analogy .analogy-bubble {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a1a2e;
+            color: #fff;
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            white-space: nowrap;
+            z-index: 50;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            line-height: 1.4;
+            text-align: center;
+            min-width: 160px;
+        }
+        .logic-analogy .analogy-bubble::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1a1a2e;
+        }
+        .logic-analogy:hover .analogy-bubble {
+            display: block;
+            animation: fadeIn 0.2s ease-out;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">

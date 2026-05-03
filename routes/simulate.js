@@ -167,6 +167,85 @@ router.get('/', async (req, res) => {
         const apiKey = process.env.GOOGLE_MAPS_API_KEY || 'YOUR_API_KEY';
         extraData.mapsUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${lat},${lng}&zoom=15&size=600x300&markers=color:red%7C${lat},${lng}&key=${apiKey}`;
         req.trackApiUsage('MAPS');
+
+        // Fictional candidates — village-simple manifestos
+        // Disclaimer: These names are made up. We don't want to pick real names
+        // because we don't want to pick sides. This is just for learning.
+        extraData.candidates = [
+            {
+                id: 'A',
+                name: 'Lydan',
+                nickname: 'The Well-Builder',
+                symbol: '🪣',
+                promise: 'Clean water for every house in 2 years.',
+                form26: {
+                    assets: '₹4 lakh — one house, some gold.',
+                    liabilities: '₹1.5 lakh bank loan.',
+                    cases: 'None.',
+                    education: 'Class 10 pass.'
+                }
+            },
+            {
+                id: 'B',
+                name: 'Syrin',
+                nickname: 'The Skill-Teacher',
+                symbol: '📚',
+                promise: 'Free skill school for all village youth.',
+                form26: {
+                    assets: '₹12 lakh — land and savings.',
+                    liabilities: 'No loans.',
+                    cases: '1 old case — traffic fine. Settled.',
+                    education: 'Graduate.'
+                }
+            },
+            {
+                id: 'C',
+                name: 'Ptorik',
+                nickname: 'The Road-Fixer',
+                symbol: '🛣️',
+                promise: 'Fix all broken roads in 6 months.',
+                form26: {
+                    assets: '₹88 lakh — business and property.',
+                    liabilities: '₹30 lakh business loan.',
+                    cases: '2 cases — both still in court.',
+                    education: 'MBA.'
+                }
+            },
+            {
+                id: 'D',
+                name: 'Vaxen',
+                nickname: 'The Health Worker',
+                symbol: '🏥',
+                promise: 'Free health check-up camp every month.',
+                form26: {
+                    assets: '₹6 lakh — house and savings.',
+                    liabilities: 'No loans.',
+                    cases: 'None.',
+                    education: 'Nursing diploma.'
+                }
+            },
+            {
+                id: 'E',
+                name: 'Krylo',
+                nickname: 'The Law-Maker',
+                symbol: '⚖️',
+                promise: 'Make a new law to stop farm fires.',
+                form26: {
+                    assets: '₹2.3 crore — flats and gold.',
+                    liabilities: '₹60 lakh loans.',
+                    cases: '5 cases — still going on.',
+                    education: 'Law degree.'
+                }
+            }
+        ];
+
+        // Form 26 field analogies for LogicAnalogy tooltip
+        extraData.form26Analogies = {
+            assets:      { label: 'Property & Gold', tip: 'Things they own — house, land, gold, money in bank.' },
+            liabilities: { label: 'Bank Loans',      tip: 'Money they still owe to others.' },
+            cases:       { label: 'Police Cases',    tip: 'Times police or court said they did something wrong.' },
+            education:   { label: 'School / College', tip: 'How much they studied in school.' }
+        };
     }
 
     const electionData = require('../logic/electionData.json');
